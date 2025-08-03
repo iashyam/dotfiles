@@ -1,0 +1,57 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 28,
+  "modules-left": ["custom/arch", "hyprland/workspaces", "custom/appname"],
+  "modules-center": [],
+  "modules-right": ["pulseaudio", "network", "custom/user","clock"],
+
+  "custom/arch": {
+    "format": "",
+    "tooltip": false
+  },
+
+  "hyprland/workspaces": {
+  "format": "{name}",
+  "on-click": "activate",
+  "all-outputs": false,
+  "sort-by-number": true
+ },
+
+  
+ "custom/appname": {
+ "exec": "hyprctl activewindow -j | jq -r '.class' | sed -e 's/com.mitchellh.ghostty/Terminal/' -e 's/org.mozilla.firefox/Firefox/' -e 's/code-oss/VS Code/'",
+  "interval": 1,
+  "tooltip": false
+ },
+
+  "clock": {
+    "format": "{:%a %b %d  %I:%M %p}",
+    "tooltip": false,
+	"on-click": "yad --calendar --undecorated --no-buttons --close-on-unfocus --posx=1000 --posy=30 &"
+  },
+
+  "network": {
+    "format": "     {essid}",
+    "tooltip": false
+  },
+
+  "pulseaudio": {
+    "format": "     {volume}%",
+    "format-muted": "",
+	"on-click": "pavucontrol",
+    "tooltip": false
+  },
+
+  "battery": {
+    "format": "{icon}    {capacity}%",
+    "format-icons": ["", "", "", "", ""],
+    "tooltip": false
+  },
+
+  "custom/user": {
+    "format": "    shyam",
+    "tooltip": false
+  }
+}
+
