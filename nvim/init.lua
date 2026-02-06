@@ -1,5 +1,3 @@
-vim.opt.number = true
-vim.opt.relativenumber = true
 vim.opt.expandtab = true
 vim.opt.shiftwidth = 4
 vim.opt.tabstop = 4
@@ -8,6 +6,10 @@ vim.opt.termguicolors = true
 -- leader
 vim.g.mapleader = " "
 
+
+-- keymapping
+vim.keymap.set("n", "<leader>d", "<cmd>Telescope diagnostics<cr>")
+vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float)
 
 -- lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -33,11 +35,28 @@ require("lazy").setup({
   -- completion
   "hrsh7th/nvim-cmp",
   "hrsh7th/cmp-nvim-lsp",
+  "stevearc/conform.nvim",
+  {
+  "zbirenbaum/copilot.lua",
+  cmd = "Copilot",
+  config = function()
+    require("copilot").setup({})
+  end,
+  },
+  {
+  "zbirenbaum/copilot-cmp",
+  dependencies = "zbirenbaum/copilot.lua",
+  config = function()
+    require("copilot_cmp").setup()
+  end,
+  },
 
   -- telescope
   {
   "nvim-telescope/telescope.nvim",
+
   dependencies = { "nvim-lua/plenary.nvim" },
+  { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
   },
 
  {
@@ -71,14 +90,31 @@ require("lazy").setup({
   "ThePrimeagen/harpoon",
   dependencies = { "nvim-lua/plenary.nvim" },
  },
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' }
+  },
+{
+  "folke/tokyonight.nvim",
+  lazy = false,
+  priority = 1000,
+  opts = {},
+}
+} 
+)
 
+--confirm 
 
-  -- colors
-  "tanvirtin/monokai.nvim",
-  { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
- })
+require("conform").setup({
+    formatters_by_ft = {
+        lua = { "stylua" },
+        -- You can add other file types and formatters here
+        -- python = { "isort", "black" },
+    },
+    -- Optional: configure formatting on save
+    format_on_save = { timeout_ms = 500, lsp_fallback = true },
+})
 
- 
 
 -- LSP
 
@@ -100,6 +136,14 @@ vim.lsp.config("gopls", {
   capabilities = capabilities,
 })
 
+vim.api.nvim_create_autocmd("BufWritePre", {
+  group = vim.api.nvim_create_augroup("GoFormat", { clear = true }),
+  pattern = "*.go",
+  callback = function()
+    vim.lsp.buf.format({ async = false })
+  end,
+})
+
 
 -- completion (VS Code–like)
 
@@ -110,6 +154,10 @@ local cmp = require("cmp")
 cmp.setup({
   completion = {
     autocomplete = { cmp.TriggerEvent.TextChanged },
+  },
+  mapping = {
+      ["<Tab>"] = cmp.mapping.confirm({ select = true}),
+      ["<CR>"] = cmp.mapping.confirm({ select = true})
   },
   sources = {
     { name = "nvim_lsp" }, -- relevance comes from here
@@ -129,15 +177,16 @@ vim.lsp.config("gopls", {
 
 --colorscheme
 
-vim.cmd("colorscheme catppuccin")
---vim.cmd("colorscheme monokai")
+-- vim.cmd("colorscheme catppuccin")
+-- vim.cmd("colorscheme monokai")
+vim.cmd("colorscheme tokyonight")
 
-vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
-vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
-vim.api.nvim_set_hl(0, "CursorLineNr", { bg = "none" })
-vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
-vim.api.nvim_set_hl(0, "FoldColumn", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "CursorLineNr", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "FoldColumn", { bg = "none" })
 
 -- telescope setup
 require("telescope").setup({})
@@ -164,4 +213,5 @@ vim.keymap.set("n", "<leader>h", ui.toggle_quick_menu)
 vim.keymap.set("n", "<leader>1", function() ui.nav_file(1) end)
 vim.keymap.set("n", "<leader>2", function() ui.nav_file(2) end)
 vim.keymap.set("n", "<leader>3", function() ui.nav_file(3) end)
+vim.keymap.set("n", "<leader>s", function() ui.nav_prev() end)
 

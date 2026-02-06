@@ -133,8 +133,7 @@ unset __conda_setup
 # <<< conda initialize <<<
 
 # alias related to github workflow
-alias jl='jupyter lab'
-alias gst='git status'
+
 alias gpl='git pull'
 alias gpsh='git push'
 alias gadd='git add .'
